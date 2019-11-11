@@ -291,7 +291,7 @@ for clf in clfs:
 
 # Create the pandas DataFrame 
 #dfroc = pd.DataFrame(dataAUROC, columns = ['Classifier', 'Regular', 'Global', 'Local', 'MAUC']) 
-#dfroc = pd.DataFrame(dataAUROC, columns = ['Classifier', 'Regular', 'Global', 'Local']) 
+dfroc = pd.DataFrame(dataAUROC, columns = ['Classifier', 'Regular', 'Global', 'Local']) 
 dfroc = pd.melt(dfroc, id_vars="Classifier", var_name="group", value_name="AUROC")
 dfpr = pd.DataFrame(dataAUPR, columns = ['Classifier', 'Regular', 'Global', 'Local']) 
 dfpr = pd.melt(dfpr, id_vars="Classifier", var_name="group", value_name="AUPR")
