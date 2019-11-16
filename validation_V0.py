@@ -27,6 +27,8 @@ from Discriminator import Discriminator
 
 USE_CUDA = True
 
+#latent space configs
+latentVecDim = 3 # original value = 2
 
 # print current Python version
 now = datetime.utcnow().strftime("%Y%m%d-%H:%M:%S")
@@ -101,7 +103,7 @@ ori_subset_transformed = pd.concat([ori_dataset_categ_transformed, ori_dataset_n
 
 # Encoder/Generator network instantiation
 # init training network classes / architectures
-encoder_train = Encoder(input_size=ori_subset_transformed.shape[1], hidden_size=[256, 64, 16, 4, 2])
+encoder_train = Encoder(input_size=ori_subset_transformed.shape[1], hidden_size=[256, 64, 16, 4, latentVecDim])
 # push to cuda if cudnn is available
 if (torch.backends.cudnn.version() != None and USE_CUDA == True):
     encoder_train = encoder_train.cuda()
@@ -111,7 +113,7 @@ print('[LOG {}] encoder-generator architecture:\n\n{}\n'.format(now, encoder_tra
 
 # Decoder network instantiation
 # init training network classes / architectures
-decoder_train = Decoder(output_size=ori_subset_transformed.shape[1], hidden_size=[2, 4, 16, 64, 256])
+decoder_train = Decoder(output_size=ori_subset_transformed.shape[1], hidden_size=[latentVecDim, 4, 16, 64, 256])
 # push to cuda if cudnn is available
 if (torch.backends.cudnn.version() != None) and (USE_CUDA == True):
     decoder_train = decoder_train.cuda()
@@ -121,7 +123,7 @@ print('[LOG {}] decoder architecture:\n\n{}\n'.format(now, decoder_train))
 
 # Discriminator network
 # init training network classes / architectures
-discriminator_train = Discriminator(input_size=2, hidden_size=[256, 16, 4, 2], output_size=1)
+discriminator_train = Discriminator(input_size=latentVecDim, hidden_size=[256, 16, 4, 2], output_size=1)
 # push to cuda if cudnn is available
 if (torch.backends.cudnn.version() != None) and (USE_CUDA == True):
     discriminator_train = discriminator_train.cuda()
@@ -165,12 +167,16 @@ radius = 0.8
 # define the sigma of each gaussian
 sigma = 0.01
 # define the dimensionality of each gaussian
-dim = 2
+dim = latentVecDim
 # determine x and y coordinates of the target mixture of gaussians
-x_centroid = (radius * np.sin(np.linspace(0, 2 * np.pi, tau, endpoint=False)) + 1) / 2
-y_centroid = (radius * np.cos(np.linspace(0, 2 * np.pi, tau, endpoint=False)) + 1) / 2
+centroids_dim_n = []
+for i in range(0, latentVecDim):
+    centroids_dim_n.extend((radius * np.sin(np.linspace(0, 2 * np.pi, tau, endpoint=False)) + 1) / 2)
+print(centroids_dim_n)
+#x_centroid = (radius * np.sin(np.linspace(0, 2 * np.pi, tau, endpoint=False)) + 1) / 2
+#y_centroid = (radius * np.cos(np.linspace(0, 2 * np.pi, tau, endpoint=False)) + 1) / 2
 # determine each gaussians mean (centroid) and standard deviation
-mu_gauss = np.vstack([x_centroid, y_centroid]).T
+mu_gauss = np.vstack(centroids_dim_n).T
 # determine the number of samples to be created per gaussian
 samples_per_gaussian = 100000
 # iterate over the number of distinct gaussians
@@ -406,15 +412,15 @@ for epoch in range(num_epochs):
     
     # save trained encoder model file to disk
     now = datetime.utcnow().strftime("%Y%m%d-%H_%M_%S")
-    encoder_model_name = "{}_ep_{}_encoder_model.pth".format(now, (epoch+1))
+    encoder_model_name = "{}_{}_{}_ep_{}_encoder_model.pth".format(latentVecDim, tau, now, (epoch+1))
     torch.save(encoder_train.state_dict(), os.path.join("./models", encoder_model_name))
 
     # save trained decoder model file to disk
-    decoder_model_name = "{}_ep_{}_decoder_model.pth".format(now, (epoch+1))
+    decoder_model_name = "{}_{}_{}_ep_{}_decoder_model.pth".format(latentVecDim, tau,now, (epoch+1))
     torch.save(decoder_train.state_dict(), os.path.join("./models", decoder_model_name))
     
     # save trained discriminator model file to disk
-    decoder_model_name = "{}_ep_{}_discriminator_model.pth".format(now, (epoch+1))
+    decoder_model_name = "{}_{}_{}_ep_{}_discriminator_model.pth".format(latentVecDim, tau, now, (epoch+1))
     torch.save(discriminator_train.state_dict(), os.path.join("./models", decoder_model_name))
 
 totalElapsedTime = time.time() - start
