@@ -171,7 +171,10 @@ dim = latentVecDim
 # determine x and y coordinates of the target mixture of gaussians
 centroids_dim_n = []
 for i in range(0, latentVecDim):
-    centroids_dim_n.append((radius * np.sin(np.linspace(0, 2 * np.pi, tau, endpoint=False)) + 1) / 2)
+    if i%2 == 0: #if i is an even dim, then
+        centroids_dim_n.append((radius * np.cos(np.linspace(0, 2 * np.pi, tau, endpoint=False)) + 1) / 2)
+    else:
+        centroids_dim_n.append((radius * np.sin(np.linspace(0, 2 * np.pi, tau, endpoint=False)) + 1) / 2)
 #print(centroids_dim_n)
 #x_centroid = (radius * np.sin(np.linspace(0, 2 * np.pi, tau, endpoint=False)) + 1) / 2
 #y_centroid = (radius * np.cos(np.linspace(0, 2 * np.pi, tau, endpoint=False)) + 1) / 2
