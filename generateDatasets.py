@@ -31,6 +31,8 @@ from Discriminator import Discriminator
 
 USE_CUDA = False
 
+latentVecDim = 3
+
 '''
 The raw.githubusercontent.com domain is used to serve unprocessed versions of files stored in GitHub repositories.
  If you browse to a file on GitHub and then click the Raw link, that's where you'll go.
@@ -108,18 +110,25 @@ mini_batch_size = 128
 
 # creation of the imposed latent prior distribution
 # define the number of gaussians
-tau = 20
+tau = 5 
 # define radius of each gaussian
 radius = 0.8
 # define the sigma of each gaussian
 sigma = 0.01
 # define the dimensionality of each gaussian
-dim = 2
+dim = latentVecDim
 # determine x and y coordinates of the target mixture of gaussians
-x_centroid = (radius * np.sin(np.linspace(0, 2 * np.pi, tau, endpoint=False)) + 1) / 2
-y_centroid = (radius * np.cos(np.linspace(0, 2 * np.pi, tau, endpoint=False)) + 1) / 2
+centroids_dim_n = []
+for i in range(0, latentVecDim):
+    if i%2 == 0: #if i is an even dim, then
+        centroids_dim_n.append((radius * np.cos(np.linspace(0, 2 * np.pi, tau, endpoint=False)) + 1) / 2)
+    else:
+        centroids_dim_n.append((radius * np.sin(np.linspace(0, 2 * np.pi, tau, endpoint=False)) + 1) / 2)
+#print(centroids_dim_n)
+#x_centroid = (radius * np.sin(np.linspace(0, 2 * np.pi, tau, endpoint=False)) + 1) / 2
+#y_centroid = (radius * np.cos(np.linspace(0, 2 * np.pi, tau, endpoint=False)) + 1) / 2
 # determine each gaussians mean (centroid) and standard deviation
-mu_gauss = np.vstack([x_centroid, y_centroid]).T
+mu_gauss = np.vstack(centroids_dim_n).T
 # determine the number of samples to be created per gaussian
 samples_per_gaussian = 100000
 # iterate over the number of distinct gaussians
@@ -136,18 +145,8 @@ for i, mu in enumerate(mu_gauss):
         z_continous_samples_all = np.vstack([z_continous_samples_all, z_continous_samples])
 
 # restore pretrained model checkpoint
-if tau == 5:
-    print("restoring tau = 5 model")
-    encoder_model_name = 'https://github.com/jcssilva4/finalFraudDetect_DeepLearning/blob/master/models/tau5/20190930-15_29_22_ep_5000_encoder_model.pth?raw=true'
-    decoder_model_name = 'https://github.com/jcssilva4/finalFraudDetect_DeepLearning/blob/master/models/tau5/20190930-15_29_22_ep_5000_decoder_model.pth?raw=true'
-elif tau == 10:
-    print("restoring tau = 10 model")
-    encoder_model_name = 'https://github.com/jcssilva4/finalFraudDetect_DeepLearning/blob/master/models/tau10/20190926-23_25_55_ep_5000_encoder_model.pth?raw=true'
-    decoder_model_name = 'https://github.com/jcssilva4/finalFraudDetect_DeepLearning/blob/master/models/tau10/20190926-23_25_55_ep_5000_decoder_model.pth?raw=true'
-elif tau == 20:
-    print("restoring tau = 20 model")
-    encoder_model_name = 'https://github.com/jcssilva4/finalFraudDetect_DeepLearning/blob/master/models/tau20/20191003-18_15_36_ep_5000_encoder_model.pth?raw=true'
-    decoder_model_name = 'https://github.com/jcssilva4/finalFraudDetect_DeepLearning/blob/master/models/tau20/20191003-18_15_36_ep_5000_decoder_model.pth?raw=true'
+encoder_model_name = 'https://github.com/jcssilva4/deep_learning_proj1/blob/master/models/3_5_20191124-15_31_01_ep_5000_encoder_model.pth?raw=true'
+decoder_model_name = 'https://github.com/jcssilva4/deep_learning_proj1/blob/master/models/3_5_20191124-15_31_01_ep_5000_decoder_model.pth?raw=true'
 
 # Read stored model from the remote location
 encoder_bytes = urllib.request.urlopen(encoder_model_name)
@@ -158,8 +157,8 @@ encoder_buffer = io.BytesIO(encoder_bytes.read())
 decoder_buffer = io.BytesIO(decoder_bytes.read())
 
 # init training network classes / architectures
-encoder_eval = Encoder(input_size=ori_subset_transformed.shape[1], hidden_size=[256, 64, 16, 4, 2])
-decoder_eval = Decoder(output_size=ori_subset_transformed.shape[1], hidden_size=[2, 4, 16, 64, 256])
+encoder_eval = Encoder(input_size=ori_subset_transformed.shape[1], hidden_size=[256, 64, 16, 4, latentVecDim])
+decoder_eval = Decoder(output_size=ori_subset_transformed.shape[1], hidden_size=[latentVecDim, 4, 16, 64, 256])
 
 # push to cuda if cudnn is available
 if (torch.backends.cudnn.version() != None) and (USE_CUDA == True):
@@ -216,9 +215,6 @@ for enc_transactions_batch in dataloader_eval:
 # convert to numpy array
 z_enc_transactions_all = z_enc_transactions_all.cpu().detach().numpy()
 
-# prepare plot
-fig = plt.figure(figsize=(12,12))
-ax = fig.add_subplot(111)
 
 
 # obtain regular transactions as well as global and local anomalies
@@ -227,11 +223,6 @@ global_outliers = z_enc_transactions_all[label == 'global']
 local_outliers = z_enc_transactions_all[label == 'local']
 print("|R| = " + str(len(regular_data)) + " ## |GA| = " + str(len(global_outliers)) + " ## |LA| = " + str(len(local_outliers)))
 
-# plot reconstruction error scatter plot
-ax.scatter(regular_data[:, 0], regular_data[:, 1], c='C0', marker="o", label='regular', edgecolors='w', linewidth=0.5) # plot regular transactions
-ax.scatter(global_outliers[:, 0], global_outliers[:, 1], c='C1', marker="x", label='global', edgecolors='w', s=60) # plot global outliers
-ax.scatter(local_outliers[:, 0], local_outliers[:, 1], c='C3', marker="x", label='local', edgecolors='w', s=60) # plot local outliers
-
 # save base article latent space for t = tau
 '''
 labels
@@ -239,7 +230,7 @@ labels
 1 stands for global A
 2 stands for local A
 '''
-base_dataSet = open("latent_data_sets/tau" + str(tau) +"_basisLS.txt","w")
+base_dataSet = open("latent_data_sets/ldim" + str(latentVecDim) + "_tau" + str(tau) +"_basisLS.txt","w")
 for L in ["\t".join(item) for item in regular_data.astype(str)]:
     base_dataSet.writelines(L + "\t0\n")
 for L in ["\t".join(item) for item in global_outliers.astype(str)]:
