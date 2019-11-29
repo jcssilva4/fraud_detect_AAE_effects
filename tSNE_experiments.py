@@ -78,4 +78,6 @@ ax.set_xlabel("z1")
 ax.set_ylabel("z2")
 # add plot title
 ax.set_title('Prior Latent Space Distribution $p(z)$');
-plt.show()
+#plt.show()
+
+fig.savefig("ldim{}_tau{}_TSNEproj.png", latentVecDim, tau)

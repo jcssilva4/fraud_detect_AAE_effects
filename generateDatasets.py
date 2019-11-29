@@ -110,7 +110,7 @@ mini_batch_size = 128
 
 # creation of the imposed latent prior distribution
 # define the number of gaussians
-tau = 5 
+tau = 10
 # define radius of each gaussian
 radius = 0.8
 # define the sigma of each gaussian
@@ -145,8 +145,8 @@ for i, mu in enumerate(mu_gauss):
         z_continous_samples_all = np.vstack([z_continous_samples_all, z_continous_samples])
 
 # restore pretrained model checkpoint
-encoder_model_name = 'https://github.com/jcssilva4/deep_learning_proj1/blob/master/models/3_5_20191124-15_31_01_ep_5000_encoder_model.pth?raw=true'
-decoder_model_name = 'https://github.com/jcssilva4/deep_learning_proj1/blob/master/models/3_5_20191124-15_31_01_ep_5000_decoder_model.pth?raw=true'
+encoder_model_name = 'https://github.com/jcssilva4/deep_learning_proj1/blob/master/models/3_10_20191129-04_58_53_ep_5000_encoder_model.pth?raw=true'
+decoder_model_name = 'https://github.com/jcssilva4/deep_learning_proj1/blob/master/models/3_10_20191129-04_58_53_ep_5000_decoder_model.pth?raw=true'
 
 # Read stored model from the remote location
 encoder_bytes = urllib.request.urlopen(encoder_model_name)
