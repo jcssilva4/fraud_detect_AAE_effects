@@ -17,12 +17,10 @@ import pandas as pd
 from imblearn.metrics import geometric_mean_score as gmean
 from MAUC import MAUC
 
-#all_tau = [5, 10, 20] 
-all_tau = [5, 10]
-K = 5 #number of folds
+all_tau = [5, 10, 20] 
+K = 10 #number of folds
+clfs = ['NB', 'RF', 'SVM']
 seed_value = 1234
-#clfs = ['NB', 'RF', 'SVM']
-clfs = ['NB', 'RF']
 
 # General Results dictionaries
 #clf_MAUC = dict()
@@ -108,7 +106,7 @@ for tau in all_tau:
 	for clf in clfs:
 		result_gmean_clf = [clf] #append clf name
 		result_gmean_clf.append(clf_gmean[clf + str(tau)]) #append gmean result
-	data_gmean.append(result_gmean_clf) 
+		data_gmean.append(result_gmean_clf) 
 
 	print(data_gmean)
 	# Create the pandas DataFrame 

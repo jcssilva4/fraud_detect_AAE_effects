@@ -15,8 +15,8 @@ clf_AUPR_local = dict()
 dataAUROC = [['NB', 0.5, 0.6, 0.4], ['RF', 0.5, 0.5, 0.4], ['SVM', 0.6, 0.3, 0.4]] 
   
 # Create the pandas DataFrame 
-df = pd.DataFrame(dataAUROC, columns = ['Classifier', 'Regular', 'Global', 'Local']) 
-df = pd.melt(df, id_vars="Classifier", var_name="group", value_name="AUROC")
+df = pd.DataFrame(dataAUROC, columns = ['Classifier', 'tau = 5', 'tau = 10', 'tau = 20']) 
+df = pd.melt(df, id_vars="Classifier", var_name="group", value_name="MAUC")
  
 # print dataframe. 
 print(df) 
