@@ -86,6 +86,7 @@ X = ori_subset_transformed.to_numpy() #convert df to numpy array
 Y = []
 Y_normal = []
 for y in label:
+	print(y)
 	if y == "regular":
 		Y.append([0])
 		Y_normal.extend([0])
