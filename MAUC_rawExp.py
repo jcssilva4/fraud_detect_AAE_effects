@@ -88,13 +88,13 @@ Y_normal = []
 for y in label:
 	if y == "regular":
 		Y.append([0])
-		Y_normal.extend(0)
+		Y_normal.extend([0])
 	if y == "global":
 		Y.append([1])
-		Y_normal.extend(1)
+		Y_normal.extend([1])
 	if y == "local":
 		Y.append([2])
-		Y_normal.extend(2)
+		Y_normal.extend([2])
 clss = [0, 1, 2]
 
 all_tau = [5, 10, 20] 
