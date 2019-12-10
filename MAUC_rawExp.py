@@ -84,13 +84,17 @@ ori_subset_transformed = pd.concat([ori_dataset_categ_transformed, ori_dataset_n
 #initialize X, Y
 X = ori_subset_transformed.to_numpy() #convert df to numpy array
 Y = []
+Y_normal = []
 for y in label:
 	if y == "regular":
 		Y.append([0])
+		Y_normal.append(0)
 	if y == "global":
 		Y.append([1])
+		Y_normal.append(1)
 	if y == "local":
 		Y.append([2])
+		Y_normal.append(2)
 clss = [0, 1, 2]
 
 all_tau = [5, 10, 20] 
@@ -104,21 +108,6 @@ clf_MAUC = dict()
 #maybe you can also use outlier detection:https://scikit-learn.org/stable/auto_examples/plot_anomaly_comparison.html#sphx-glr-auto-examples-plot-anomaly-comparison-py
 
 for clf_name in  clfs:
-
-    for tau in all_tau:
-        datasetFile = open("latent_data_sets/ldim" + str(latentVecDim) + "_tau" + str(tau) +"_basisLS.txt","r")
-        #initialize X, Y
-        X = []
-        Y = [] # list of list of classes [[cl1], [cl2], ..., [cln] ]
-        Y_normal = [] # list of classes [cl1, cl2, ... cln]
-        #read data set
-        for L in datasetFile:
-            XY = L.split('\t')
-            X.append([float(z) for z in XY[0:len(XY)-1]]) # get feature values for object L
-            y = XY[len(XY)-1].split('\n')
-            Y.append([int(y[0])]) # get object L label
-            Y_normal.extend([int(y[0])]) # get object L label
-        clss = [0, 1, 2]
         '''
         # Apply Stratified K-Folds cross-validator
         Provides train/test indices to split data in train/test sets.
@@ -179,7 +168,7 @@ for clf_name in  clfs:
         #YConverted = []
         #YConverted.extend(y for y in Y_test_all_normal)
         mapped = list(zip(Y_test_all_normal, Y_score_all))
-        clf_MAUC[clf_name + str(tau)] = MAUC(mapped, len(clss))
+        clf_MAUC[clf_name] = MAUC(mapped, len(clss))
 
 
 
@@ -187,25 +176,14 @@ for clf_name in  clfs:
 dataMAUC = [] # convert to dataframe 
 for clf in clfs:
     clf_result_mauc = [clf] # append classifier name
-    for tau in all_tau:
-        clf_result_mauc.append(clf_MAUC[clf + str(tau)])
     dataMAUC.append(clf_result_mauc)
 
 # Create the pandas DataFrame 
-dmauc = pd.DataFrame(dataMAUC, columns = ['Classifier', 'tau = 5', 'tau = 10', 'tau = 20']) 
-dmauc = pd.melt(dmauc, id_vars="Classifier", var_name = 'group', value_name="MAUC")
+dmauc = pd.DataFrame(dataMAUC, columns = ['Classifier']) 
+dmauc = pd.melt(dmauc, id_vars="Classifier", value_name="MAUC")
+print(dmauc)
 
-# print dataframe. 
-print(dmauc) 
-colors = ['navy', 'turquoise', 'darkorange']
-sns.set_palette(colors)
-# save mauc barplot for tau. 
-fig = sns.factorplot(x='Classifier', y='MAUC', hue='group', data=dmauc, kind='bar')
-plt.title('Model performance using the original attributes' + str(latentVecDim))
-fig.savefig("results/consolidated/ldim" + str(latentVecDim) + "_MAUC.png")
-
-consolidated_results = open("results/consolidated/numeric_base" + str(latentVecDim) + "_MAUC.txt","w")
-
+consolidated_results = open("results/consolidated/originalAtt_MAUC.txt","w")
 for L in dataMAUC:
     consolidated_results.writelines(str(L) + "\n")
 
