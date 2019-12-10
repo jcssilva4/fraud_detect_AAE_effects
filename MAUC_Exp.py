@@ -19,7 +19,7 @@ from scipy import interp
 import pandas as pd 
 from MAUC import MAUC
 
-latentVecDim = 3
+latentVecDim = 5
 all_tau = [5, 10, 20] 
 K = 10 #number of folds
 seed_value = 1234
@@ -128,7 +128,7 @@ colors = ['navy', 'turquoise', 'darkorange']
 sns.set_palette(colors)
 # save mauc barplot for tau. 
 fig = sns.factorplot(x='Classifier', y='MAUC', hue='group', data=dmauc, kind='bar')
-plt.title('Model performance per class (MAUC) for tau = ' + str(tau))
+plt.title('Model performance for latent space dimension = ' + str(latentVecDim))
 fig.savefig("results/consolidated/ldim" + str(latentVecDim) + "_MAUC.png")
 
 consolidated_results = open("results/consolidated/numeric_ldim" + str(latentVecDim) + "_MAUC.txt","w")
