@@ -100,7 +100,7 @@ clss = [0, 1, 2]
 all_tau = [5, 10, 20] 
 K = 10 #number of folds
 seed_value = 1234
-clfs = ['NB', 'RF', 'SVM']
+clfs = ['RF', 'SVM']
 # General Results dictionaries
 clf_MAUC = dict()   
 #maybe you can also use outlier detection:https://scikit-learn.org/stable/auto_examples/plot_anomaly_comparison.html#sphx-glr-auto-examples-plot-anomaly-comparison-py
