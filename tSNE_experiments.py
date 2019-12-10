@@ -10,8 +10,8 @@ import seaborn as sns
 sns.set_style('darkgrid')
 from IPython.display import Image, display
 
-latentVecDim = 3
-tau = 5
+latentVecDim = 5
+tau = 20
 
 #read data set
 print("Reading data...")
@@ -27,7 +27,7 @@ for L in datasetFile:
 
 print("Projecting...")
 #project a higher dimensional space into an embedded 2D space
-X_embedded = TSNE(n_components=2).fit_transform(X)
+X_embedded = TSNE(n_components=2, perplexity = 20).fit_transform(X)
 
 # separate different types of entries
 regular_data = []
