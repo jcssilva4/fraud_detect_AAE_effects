@@ -150,11 +150,13 @@ for clf_name in  clfs:
             #print("TRAIN:", train_index, "TEST:", test_index)
             X_train, X_test = [X[i] for i in train_index], [X[j] for j in test_index]
             Y_train, Y_test = [Y[i] for i in train_index], [Y[j] for j in test_index]
-            print('fitted')
             Y_test_normal = [Y_normal[j] for j in test_index]
+            print('fitted')
+            print(Y_test_normal)
             Y_train = MultiLabelBinarizer().fit_transform(Y_train)
             Y_test_all_normal.extend(Y_test_normal)
             Y_test = MultiLabelBinarizer().fit_transform(Y_test)
+            print('nowfit')
             clf.fit(X_train, Y_train)
             y_score = clf.predict_proba(X_test)
             # Why am i concatenating all k-fold data?? https://stackoverflow.com/questions/26587759/plotting-precision-recall-curve-when-using-cross-validation-in-scikit-learn
