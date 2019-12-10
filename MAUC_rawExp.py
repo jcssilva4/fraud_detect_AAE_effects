@@ -86,7 +86,6 @@ X = ori_subset_transformed.to_numpy() #convert df to numpy array
 Y = []
 Y_normal = []
 for y in label:
-	print(y)
 	if y == "regular":
 		Y.append([0])
 		Y_normal.extend([0])
@@ -150,7 +149,6 @@ for clf_name in  clfs:
             X_train, X_test = [X[i] for i in train_index], [X[j] for j in test_index]
             Y_train, Y_test = [Y[i] for i in train_index], [Y[j] for j in test_index]
             Y_test_normal = [Y_normal[j] for j in test_index]
-            print(Y_test_normal)
             Y_train = MultiLabelBinarizer().fit_transform(Y_train)
             Y_test_all_normal.extend(Y_test_normal)
             Y_test = MultiLabelBinarizer().fit_transform(Y_test)
