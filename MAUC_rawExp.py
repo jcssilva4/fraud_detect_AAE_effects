@@ -103,8 +103,6 @@ K = 10 #number of folds
 seed_value = 1234
 clfs = ['NB', 'RF', 'SVM']
 # General Results dictionaries
-clf_AUROC = dict()
-clf_AUPR = dict()
 clf_MAUC = dict()   
 #maybe you can also use outlier detection:https://scikit-learn.org/stable/auto_examples/plot_anomaly_comparison.html#sphx-glr-auto-examples-plot-anomaly-comparison-py
 
@@ -152,13 +150,12 @@ for clf_name in  clfs:
             X_train, X_test = [X[i] for i in train_index], [X[j] for j in test_index]
             Y_train, Y_test = [Y[i] for i in train_index], [Y[j] for j in test_index]
             Y_test_normal = [Y_normal[j] for j in test_index]
-            print('fitted')
             print(Y_test_normal)
             Y_train = MultiLabelBinarizer().fit_transform(Y_train)
             Y_test_all_normal.extend(Y_test_normal)
             Y_test = MultiLabelBinarizer().fit_transform(Y_test)
-            print('nowfit')
             clf.fit(X_train, Y_train)
+            print('nowproba')
             y_score = clf.predict_proba(X_test)
             # Why am i concatenating all k-fold data?? https://stackoverflow.com/questions/26587759/plotting-precision-recall-curve-when-using-cross-validation-in-scikit-learn
             if foldCounter == 1:
