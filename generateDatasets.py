@@ -31,7 +31,7 @@ from Discriminator import Discriminator
 
 USE_CUDA = False
 
-latentVecDim = 5
+latentVecDim = 10
 
 '''
 The raw.githubusercontent.com domain is used to serve unprocessed versions of files stored in GitHub repositories.
@@ -110,7 +110,7 @@ mini_batch_size = 128
 
 # creation of the imposed latent prior distribution
 # define the number of gaussians
-tau = 20
+tau = 5
 # define radius of each gaussian
 radius = 0.8
 # define the sigma of each gaussian
@@ -145,8 +145,8 @@ for i, mu in enumerate(mu_gauss):
         z_continous_samples_all = np.vstack([z_continous_samples_all, z_continous_samples])
 
 # restore pretrained model checkpoint
-encoder_model_name = 'https://github.com/jcssilva4/deep_learning_proj1/blob/master/models/5_20_20191209-20_32_25_ep_5000_encoder_model.pth?raw=true'
-decoder_model_name = 'https://github.com/jcssilva4/deep_learning_proj1/blob/master/models/5_20_20191209-20_32_25_ep_5000_decoder_model.pth?raw=true'
+encoder_model_name = 'https://github.com/jcssilva4/deep_learning_proj1/blob/master/models/10_5_20191212-16_14_06_ep_5000_encoder_model.pth?raw=true'
+decoder_model_name = 'https://github.com/jcssilva4/deep_learning_proj1/blob/master/models/10_5_20191212-16_14_06_ep_5000_decoder_model.pth?raw=true'
 
 # Read stored model from the remote location
 encoder_bytes = urllib.request.urlopen(encoder_model_name)

@@ -83,6 +83,8 @@ ori_dataset_numeric_attr = (numeric_attr - numeric_attr.min()) / (numeric_attr.m
 ori_subset_transformed = pd.concat([ori_dataset_categ_transformed, ori_dataset_numeric_attr], axis = 1)
 #initialize X, Y
 X = ori_subset_transformed.to_numpy() #convert df to numpy array
+X = X.tolist()
+print(X)
 Y = []
 for y in label:
 	if y == "regular":
