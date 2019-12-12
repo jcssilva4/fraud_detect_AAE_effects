@@ -84,7 +84,10 @@ ori_subset_transformed = pd.concat([ori_dataset_categ_transformed, ori_dataset_n
 #initialize X, Y
 X = ori_subset_transformed.to_numpy() #convert df to numpy array
 X = X.tolist()
+<<<<<<< Updated upstream
 print(X)
+=======
+>>>>>>> Stashed changes
 Y = []
 for y in label:
 	if y == "regular":
