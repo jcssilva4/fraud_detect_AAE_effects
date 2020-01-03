@@ -19,7 +19,7 @@ from scipy import interp
 import pandas as pd 
 from MAUC import MAUC
 
-latentVecDim = 5
+latentVecDim = 10
 all_tau = [5, 10, 20] 
 K = 10 #number of folds
 seed_value = 1234
