@@ -4,7 +4,6 @@
 
 after running these two routines, one can run:
 
-proj1 (classifiers performance)
-proj1.1. MAUC_Exp.py # use latent vectors as features
-proj1.2. MAUC_rawExp.py # run using the original features (618 in total)
+1. MAUC_Exp.py # use latent vectors as features
+2. MAUC_rawExp.py # run using the original features (618 in total)
 
